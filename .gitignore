@@ -1,2 +1,16 @@
+coverage
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# Serverless directories
+.serverless
+dist
+
+# IntelliJ
 .idea
-node_modules
+*.iml
+
+# Jenkins deployment work directory
+.deployment/
