@@ -1,0 +1,43 @@
+service: know-god-asset-import
+
+custom:
+  scripts:
+    hooks:
+      # Run s3deploy command
+      'aws:deploy:finalize:cleanup': './node_modules/.bin/serverless --stage $ENVIRONMENT s3deploy'
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-1
+  environment: ${file(serverless/environment.js)}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "s3:PutBucketNotification"
+      Resource:
+        Fn::Join: ['', ["arn:aws:s3:::", "${env:S3_BUCKET_NAME}"]]
+  $<<: ${file(serverless/provider.js)}
+
+functions:
+  unzip-assets:
+    handler: index.handler
+    events:
+      - existingS3:
+          bucket: ${env:S3_BUCKET_NAME}
+          events:
+            - s3:ObjectCreated:*
+          rules:
+            - prefix: GodTools/
+            - suffix: .zip
+
+package:
+  exclude:
+  - .git/**
+  - .deployment/**
+
+plugins:
+  - '@cruglobal/serverless-merge-config'
+  - serverless-plugin-scripts
+  - serverless-plugin-existing-s3
