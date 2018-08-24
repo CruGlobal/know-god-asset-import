@@ -13,14 +13,17 @@ const mobileContentAPI = 'https://mobile-content-api.cru.org';
 exports.handler = async (event) => {
 
   let zipFilename = event.Records[0].s3.object.key.split('/').pop();
+  console.log('Zip file: ' + zipFilename);
   zipFilename = zipFilename.substring(8);
   let translationId = zipFilename.substring(0, zipFilename.length - 4);
+  console.log('Translation id: ' + translationId);
 
   //download translation
   let tmpZip = tmp.fileSync();
   request(mobileContentAPI + '/translations/' + translationId)
       .pipe(fs.createWriteStream(tmpZip.name))
       .on('close', () => {
+        console.log('Zip file download complete.');
         let tmpExtractDir = tmp.dirSync({unsafeCleanup: true});
         extract(tmpZip.name, {dir: tmpExtractDir.name}, function (err) {
           if(err){
@@ -29,6 +32,7 @@ exports.handler = async (event) => {
           }
 
           fs.readdir(tmpExtractDir.name, (err, files) => {
+            console.log('Zip file extracted.');
             if (!files || files.length === 0) {
               console.log(`provided folder '${tmpExtractDir.name}' is empty or does not exist.`);
               console.log('Make sure your project was compiled!');
@@ -37,6 +41,8 @@ exports.handler = async (event) => {
 
             //only xml
             files = files.filter(file => file.includes('.xml'));
+
+            console.log(files.length + ' xml files found.');
 
             let uploadPromises = [];
             for (const fileName of files) {
