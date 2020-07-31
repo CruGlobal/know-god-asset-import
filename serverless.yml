@@ -1,18 +1,22 @@
 service: know-god-asset-import
 
-custom:
-  scripts:
-    hooks:
-      # Run s3deploy command
-      'aws:deploy:finalize:cleanup': './node_modules/.bin/serverless --stage $ENVIRONMENT s3deploy'
-
 provider:
   name: aws
-  runtime: nodejs8.10
-  timeout: 30
-  stage: dev
+  runtime: nodejs10.x
+  stage: ${env:ENVIRONMENT}
   region: us-east-1
-  environment: ${file(serverless/environment.js)}
+  vpc:
+    securityGroupIds:
+      - ${file(${env:ECS_CONFIG}/bin/vars.yml):us-east-1.webapp_elb_sg}
+    subnetIds: ${file(${env:ECS_CONFIG}/bin/vars.yml):us-east-1.prod_apps_1_all}
+  stackTags:
+    Name: ${env:PROJECT_NAME}-${self:custom.environmentMap.${env:ENVIRONMENT}}
+    owner: apps@cru.org
+    application: ${env:PROJECT_NAME}
+    env: ${self:custom.environmentMap.${env:ENVIRONMENT}}
+    managed_by: serverless-framework
+    function: lambda
+  timeout: 30
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -20,7 +24,7 @@ provider:
       Resource:
         - { "Fn::Join" : ['', ["arn:aws:s3:::", "${env:S3_BUCKET_NAME}"]] }
         - "arn:aws:s3:::know-god-assets/*"
-  $<<: ${file(serverless/provider.js)}
+  environment: ${file(serverless/environment.js)}
 
 functions:
   unzip-assets:
@@ -40,6 +44,16 @@ package:
   - .deployment/**
 
 plugins:
-  - '@cruglobal/serverless-merge-config'
   - serverless-plugin-scripts
   - serverless-plugin-existing-s3
+
+custom:
+  scripts:
+    hooks:
+      # Run s3deploy command
+      'aws:deploy:finalize:cleanup': './node_modules/.bin/serverless --stage $ENVIRONMENT s3deploy'
+  environmentMap:
+    production: prod
+    staging: stage
+    development: dev
+    lab: lab

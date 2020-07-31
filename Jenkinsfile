@@ -1,4 +1,7 @@
 #!groovy
 @Library('jenkins-jobs') _
 
-serverlessPipeline()
+serverlessPipeline(
+  defaultEnvironment: 'production',
+  packageManager: 'yarn',
+)
