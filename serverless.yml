@@ -1,14 +1,18 @@
 service: know-god-asset-import
+frameworkVersion: '3'
+configValidationMode: error
 
 provider:
   name: aws
-  runtime: nodejs10.x
   stage: ${env:ENVIRONMENT}
   region: us-east-1
   vpc:
     securityGroupIds:
-      - ${file(${env:ECS_CONFIG}/bin/vars.yml):us-east-1.webapp_elb_sg}
-    subnetIds: ${file(${env:ECS_CONFIG}/bin/vars.yml):us-east-1.prod_apps_1_all}
+      - sg-888294ed
+    subnetIds:
+      - subnet-f2c2dfda # us-east-1a
+      - subnet-1508db62 # us-east-1b
+      - subnet-3fd94266 # us-east-1c
   stackTags:
     Name: ${env:PROJECT_NAME}-${self:custom.environmentMap.${env:ENVIRONMENT}}
     owner: apps@cru.org
@@ -17,41 +21,40 @@ provider:
     managed_by: serverless-framework
     function: lambda
   timeout: 30
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - "s3:*"
-      Resource:
-        - { "Fn::Join" : ['', ["arn:aws:s3:::", "${env:S3_BUCKET_NAME}"]] }
-        - "arn:aws:s3:::know-god-assets/*"
-  environment: ${file(serverless/environment.js)}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - "s3:*"
+          Resource:
+            - { "Fn::Join" : ['', ["arn:aws:s3:::", "${env:S3_BUCKET_NAME}"]] }
+            - "arn:aws:s3:::know-god-assets/*"
+  layers:
+    - arn:aws:lambda:us-east-1:072686360478:layer:node-16_14_2:1
+  environment: ${file(env.js)}
 
 functions:
   unzip-assets:
     handler: index.handler
     events:
-      - existingS3:
+      - s3:
           bucket: ${env:S3_BUCKET_NAME}
-          events:
-            - s3:ObjectCreated:*
+          event: s3:ObjectCreated:*
           rules:
             - prefix: GodTools/
             - suffix: .zip
+          existing: true
 
 package:
-  exclude:
-  - .git/**
-  - .deployment/**
-
-plugins:
-  - serverless-plugin-scripts
-  - serverless-plugin-existing-s3
+  individually: true
+  patterns:
+    - '!.webpack/**'
+    - '!test/**'
+    - '!**/*.test.js'
+    - '!.deployment/**'
 
 custom:
-  scripts:
-    hooks:
-      # Run s3deploy command
-      'aws:deploy:finalize:cleanup': './node_modules/.bin/serverless --stage $ENVIRONMENT s3deploy'
   environmentMap:
     production: prod
     staging: stage
