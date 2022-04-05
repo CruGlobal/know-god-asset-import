@@ -61,7 +61,7 @@ custom:
   scripts:
     hooks:
       # Run s3deploy command
-      'aws:deploy:finalize:cleanup': 'npx serverless --stage $ENVIRONMENT s3deploy'
+      'aws:deploy:finalize:cleanup': 'npx serverless s3deploy'
   environmentMap:
     production: prod
     staging: stage
