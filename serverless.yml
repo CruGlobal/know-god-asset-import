@@ -1,6 +1,6 @@
 service: know-god-asset-import
 frameworkVersion: '3'
-configValidationMode: error
+configValidationMode: warn
 plugins:
   - serverless-plugin-scripts
   - serverless-plugin-existing-s3
