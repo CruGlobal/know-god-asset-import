@@ -2403,6 +2403,16 @@ semver@^7.3.5:
   dependencies:
     lru-cache "^6.0.0"
 
+serverless-plugin-existing-s3@^2.2.2:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-existing-s3/-/serverless-plugin-existing-s3-2.4.0.tgz#3dcbfb1d10cdd52dfd51ef06cd0f0810457d00a8"
+  integrity sha512-BsOSOM5X4hFmX2U7WlUWvMooTega4fKGc547OiWTUwHtB/H1nBs5bQJxM4jHJLIODEoVLw8J8O90rlif/yHwuQ==
+
+serverless-plugin-scripts@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-scripts/-/serverless-plugin-scripts-1.0.2.tgz#21808c3cfd0a1a84e48c0660b0f6f370b5665486"
+  integrity sha1-IYCMPP0KGoTkjAZgsPbzcLVmVIY=
+
 serverless@^3.11.0:
   version "3.11.0"
   resolved "https://registry.yarnpkg.com/serverless/-/serverless-3.11.0.tgz#3e2ac4e1048986a83aeebac88c69eb3bba848818"

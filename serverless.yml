@@ -1,6 +1,9 @@
 service: know-god-asset-import
 frameworkVersion: '3'
 configValidationMode: error
+plugins:
+  - serverless-plugin-scripts
+  - serverless-plugin-existing-s3
 
 provider:
   name: aws
@@ -38,13 +41,13 @@ functions:
   unzip-assets:
     handler: index.handler
     events:
-      - s3:
+      - existingS3:
           bucket: ${env:S3_BUCKET_NAME}
-          event: s3:ObjectCreated:*
+          events:
+            - s3:ObjectCreated:*
           rules:
             - prefix: GodTools/
             - suffix: .zip
-          existing: true
 
 package:
   individually: true
@@ -55,6 +58,10 @@ package:
     - '!.deployment/**'
 
 custom:
+  scripts:
+    hooks:
+      # Run s3deploy command
+      'aws:deploy:finalize:cleanup': 'npx serverless --stage $ENVIRONMENT s3deploy'
   environmentMap:
     production: prod
     staging: stage
