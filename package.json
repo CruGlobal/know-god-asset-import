@@ -10,6 +10,8 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
-    "serverless": "^3.11.0"
+    "serverless": "^3.11.0",
+    "serverless-plugin-existing-s3": "^2.2.2",
+    "serverless-plugin-scripts": "^1.0.2"
   }
 }
