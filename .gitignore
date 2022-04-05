@@ -2,7 +2,8 @@ coverage
 node_modules/
 
 # dotenv environment variables file
-.env
+!.env
+.env.*
 
 # Serverless directories
 .serverless
