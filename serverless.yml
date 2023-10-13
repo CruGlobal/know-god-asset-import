@@ -7,6 +7,7 @@ plugins:
 
 provider:
   name: aws
+  runtime: nodejs18.x
   stage: ${env:ENVIRONMENT}
   region: us-east-1
   vpc:
@@ -33,8 +34,6 @@ provider:
           Resource:
             - { "Fn::Join" : ['', ["arn:aws:s3:::", "${env:S3_BUCKET_NAME}"]] }
             - "arn:aws:s3:::know-god-assets/*"
-  layers:
-    - arn:aws:lambda:us-east-1:072686360478:layer:node-16_14_2:1
   environment: ${file(env.js)}
 
 functions:
