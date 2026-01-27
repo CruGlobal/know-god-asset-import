@@ -1,17 +1,36 @@
 {
   "name": "know-god-asset-import",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "AWS Lambda function that processes GodTools translation assets",
+  "type": "module",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "engines": {
+    "node": ">= 24.0.0"
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "aws-sdk": "^2.1107.0",
-    "extract-zip": "1.7.0",
-    "lodash": "^4.17.21",
-    "request": "^2",
-    "tmp": "^0.2.1"
+    "@aws-sdk/client-s3": "^3.500.0",
+    "extract-zip": "^2.0.1",
+    "tmp": "^0.2.3"
   },
   "devDependencies": {
-    "dotenv": "^16.0.0",
-    "serverless": "^3.35.2",
-    "serverless-plugin-existing-s3": "^2.2.2",
-    "serverless-plugin-scripts": "^1.0.2"
+    "@eslint/js": "^9.18.0",
+    "@types/aws-lambda": "^8.10.147",
+    "@types/node": "^22.10.7",
+    "@types/tmp": "^0.2.6",
+    "@vitest/coverage-v8": "^3.0.4",
+    "esbuild": "^0.24.2",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0",
+    "vitest": "^3.0.4"
   }
 }
