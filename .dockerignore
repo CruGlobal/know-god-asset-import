@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+*.md
+*.test.ts
+.tool-versions
+.serverless
+.deployment
+coverage
+.idea
+*.iml
+cventapi
+cventapi-terraform
+know-god-terraform
