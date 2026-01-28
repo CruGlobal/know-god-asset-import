@@ -1,7 +1,12 @@
 import * as esbuild from 'esbuild'
 import { execSync } from 'child_process'
 
-const version = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
+let version = 'unknown'
+try {
+  version = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
+} catch {
+  // Not in a git repo (e.g., Docker build)
+}
 
 await esbuild.build({
   entryPoints: ['./src/index.ts'],
